@@ -4,7 +4,8 @@
  *
  * Fails the build when:
  * - any [bracketed placeholder] is left in the site copy (src/content/*.ts), or
- * - SITE_URL, the site's public address, is not set.
+ * - the site's public address is unknown: neither SITE_URL nor Vercel's
+ *   VERCEL_PROJECT_PRODUCTION_URL is set.
  *
  * For a preview build that may still contain placeholders, run `npm run build:preview`.
  */
@@ -31,7 +32,7 @@ for (const name of readdirSync(contentDir).filter((f) => f.endsWith(".ts"))) {
   });
 }
 
-if (!process.env.SITE_URL) {
+if (!process.env.SITE_URL && !process.env.VERCEL_PROJECT_PRODUCTION_URL) {
   problems.push("  SITE_URL is not set. Set it to the site's public address, e.g. https://example.org");
 }
 

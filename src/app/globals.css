@@ -1,26 +1,622 @@
 @import "tailwindcss";
 
+/*
+ * Compassion Health Global design system, v2 ("elevated").
+ * Colours: the brand kit (../Compassion Health Global Brand/tokens.css) plus a deep navy
+ * drawn from the same blue scale for emphasis bands and the footer.
+ * Every colour in the site comes from here. Never hard-code a colour elsewhere.
+ *
+ * Rules (from the brand kit):
+ * - brand-light is never used for body text (arcs, large numerals, markers only).
+ * - endorse is used only for the endorsement line.
+ * - critical is used only for form errors, always with words.
+ * - No red cross or plus-shaped medical symbol, anywhere.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* The site is always light: it does not follow the phone's dark mode. */
+  color-scheme: only light;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --surface: #ffffff;
+  --surface-raised: #f8f9fb;
+  --surface-tint: #f0f6fd;
+  --ink: #0b0d10;
+  --ink-muted: #43474f;
+  --hairline: #dce3ec;
+  --brand: #295ca4;
+  --brand-strong: #244a85;
+  --brand-light: #4a90d9;
+  --brand-tint: #deeafa;
+  --endorse: #c0392b;
+  --success: #1b7a4b;
+  --warning: #9a6300;
+  --critical: #b3261e;
+  --focus: #4a90d9;
+  --on-brand: #ffffff;
 
-@media (prefers-color-scheme: dark) {
+  /* Deep navy, the darkest step of the brand blue. Emphasis bands, final calls, footer. */
+  --navy: #12284a;
+  --navy-raised: #1a355f;
+
+  /* Image scrim: lets white type sit on photography at AA contrast. */
+  --scrim-strong: rgb(9 20 38 / 0.82);
+  --scrim-mid: rgb(9 20 38 / 0.45);
+  --scrim-soft: rgb(9 20 38 / 0);
+
+  --shadow-menu-value: 0 2px 6px rgb(11 13 16 / 0.08), 0 12px 28px rgb(11 13 16 / 0.1);
+  --header-h: 64px;
+}
+@media (min-width: 70rem) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --header-h: 76px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/*
+ * Navy tone. Re-points the tokens so every component inside a navy band or over a photo
+ * adapts without its own variant: text turns white, brand turns pale blue, and so on.
+ */
+.tone-navy,
+.tone-photo {
+  --surface: var(--navy);
+  --surface-raised: var(--navy-raised);
+  --surface-tint: var(--navy-raised);
+  --ink: #ffffff;
+  --ink-muted: #c3d1e6;
+  --hairline: rgb(255 255 255 / 0.18);
+  --brand: #9bc3ef;
+  --brand-strong: #c4dbf5;
+  --brand-light: #6aa6e3;
+  --brand-tint: #22406e;
+  --endorse: #f2998a;
+  --focus: #9bc3ef;
+  --on-brand: #12284a;
+  color: var(--ink);
+}
+.tone-navy {
+  background: var(--navy);
+}
+.tone-photo {
+  background: transparent;
+}
+
+/* Map Tailwind's theme to the tokens. The default palette is removed on purpose. */
+@theme inline {
+  --color-*: initial;
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-tint: var(--surface-tint);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-hairline: var(--hairline);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-light: var(--brand-light);
+  --color-brand-tint: var(--brand-tint);
+  --color-endorse: var(--endorse);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+  --color-focus: var(--focus);
+  --color-on-brand: var(--on-brand);
+  --color-navy: var(--navy);
+  --color-navy-raised: var(--navy-raised);
+
+  --font-*: initial;
+  --font-serif: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-montserrat), "Segoe UI", Arial, sans-serif;
+  --font-text: var(--font-inter), "Segoe UI", Arial, sans-serif;
+  --font-scripture: var(--font-cormorant), Georgia, "Times New Roman", serif;
+
+  --radius-*: initial;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  --shadow-*: initial;
+  --shadow-menu: var(--shadow-menu-value);
+
+  /* Desktop navigation appears once the full content width is available. */
+  --breakpoint-nav: 70rem;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-padding-top: calc(var(--header-h) + 16px);
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--surface);
+    color: var(--ink);
+    font-family: var(--font-text);
+    font-size: 18px;
+    line-height: 28px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+  }
+}
+
+/* ---------- Layout ---------- */
+@layer components {
+  .container-site {
+    width: 100%;
+    max-width: calc(1200px + 40px);
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 48rem) {
+    .container-site {
+      max-width: calc(1200px + 80px);
+      padding-inline: 40px;
+    }
+  }
+
+  .section {
+    padding-block: 72px;
+  }
+  @media (min-width: 64rem) {
+    .section {
+      padding-block: 120px;
+    }
+  }
+  .section-tight {
+    padding-block: 56px;
+  }
+  @media (min-width: 64rem) {
+    .section-tight {
+      padding-block: 88px;
+    }
+  }
+
+  .measure {
+    max-width: 640px;
+  }
+  .measure-wide {
+    max-width: 760px;
+  }
+
+  /* ---------- Type ----------
+   * Serif (Source Serif 4) carries the big, editorial headlines.
+   * Montserrat carries labels and small headings, as in the brand kit. Inter carries text.
+   */
+  .t-display {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 44px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .t-title {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 42px;
+    letter-spacing: -0.01em;
+    color: var(--brand);
+    text-wrap: balance;
+  }
+  .t-statement {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 38px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  .t-section {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 34px;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    text-wrap: balance;
+  }
+  @media (min-width: 48rem) {
+    .t-display {
+      font-size: 56px;
+      line-height: 60px;
+    }
+    .t-title {
+      font-size: 48px;
+      line-height: 54px;
+    }
+    .t-statement {
+      font-size: 44px;
+      line-height: 50px;
+    }
+    .t-section {
+      font-size: 36px;
+      line-height: 42px;
+    }
+  }
+  @media (min-width: 80rem) {
+    .t-display {
+      font-size: 72px;
+      line-height: 76px;
+    }
+    .t-title {
+      font-size: 56px;
+      line-height: 62px;
+    }
+    .t-statement {
+      font-size: 52px;
+      line-height: 58px;
+    }
+  }
+
+  /* Small heading for items within a section. */
+  .t-item {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 26px;
+    color: var(--ink);
+  }
+  /* Serif subheading, e.g. a tagline under a work area. */
+  .t-sub {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 30px;
+    color: var(--ink);
+  }
+  @media (min-width: 48rem) {
+    .t-sub {
+      font-size: 26px;
+      line-height: 34px;
+    }
+  }
+  .t-eyebrow {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--brand);
+  }
+  .t-lead {
+    font-family: var(--font-text);
+    font-size: 19px;
+    line-height: 30px;
+    color: var(--ink);
+  }
+  @media (min-width: 48rem) {
+    .t-lead {
+      font-size: 21px;
+      line-height: 33px;
+    }
+  }
+  .t-body {
+    font-family: var(--font-text);
+    font-size: 18px;
+    line-height: 28px;
+    color: var(--ink);
+  }
+  .t-secondary {
+    font-family: var(--font-text);
+    font-size: 15px;
+    line-height: 24px;
+    color: var(--ink-muted);
+  }
+  .t-label {
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 24px;
+  }
+  /* Large editorial numerals: vision targets, section markers. */
+  .t-numeral {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    font-variant-numeric: lining-nums;
+  }
+  .t-marker {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 16px;
+    letter-spacing: 0.14em;
+    color: var(--brand-light);
+  }
+
+  /* Paragraph rhythm inside rich blocks. */
+  .flow > * + * {
+    margin-top: 1em;
+  }
+
+  .link {
+    color: var(--brand);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+  }
+  .link:hover {
+    color: var(--brand-strong);
+    text-decoration-thickness: 2px;
+  }
+
+  /* ---------- Buttons: 48px tall, 8px radius, never more than two together ---------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding-inline: 24px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 24px;
+    text-decoration: none;
+    transition:
+      background-color 160ms ease,
+      color 160ms ease,
+      border-color 160ms ease,
+      transform 160ms ease;
+    cursor: pointer;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn-primary {
+    background: var(--brand);
+    color: var(--on-brand);
+    border: 1.5px solid var(--brand);
+  }
+  .btn-primary:hover {
+    background: var(--brand-strong);
+    border-color: var(--brand-strong);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--brand);
+    border: 1.5px solid var(--brand);
+  }
+  .btn-secondary:hover {
+    color: var(--brand-strong);
+    border-color: var(--brand-strong);
+  }
+  .btn:disabled {
+    cursor: progress;
+    opacity: 0.7;
+  }
+  /* A plain text call to action with a moving arrow. */
+  .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    font-family: var(--font-text);
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--brand);
+    text-decoration: none;
+  }
+  .cta-link .arrow {
+    transition: transform 200ms ease;
+  }
+  .cta-link:hover .arrow {
+    transform: translateX(4px);
+  }
+  .cta-link:hover {
+    color: var(--brand-strong);
+  }
+
+  /* Callout: surface-tint panel, 16px radius, 24px padding. */
+  .callout {
+    background: var(--surface-tint);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+  }
+
+  /* ---------- Photography ---------- */
+  .photo {
+    position: relative;
+    overflow: hidden;
+    background: var(--brand-tint);
+  }
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .photo-hover img {
+      transition: transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .photo-hover:hover img {
+      transform: scale(1.03);
+    }
+  }
+  /* Bottom-weighted scrim so white type reads on any photograph. */
+  .scrim::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--scrim-strong) 0%, var(--scrim-strong) 45%, var(--scrim-mid) 100%);
+    pointer-events: none;
+  }
+  @media (min-width: 64rem) {
+    .scrim-left::after {
+      background: linear-gradient(
+        to right,
+        var(--scrim-strong) 0%,
+        var(--scrim-strong) 30%,
+        var(--scrim-soft) 75%
+      );
+    }
+  }
+
+  /* ---------- Form fields ---------- */
+  .field-input {
+    display: block;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 14px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+    font: inherit;
+    font-size: 18px;
+    line-height: 26px;
+    transition: border-color 160ms ease;
+  }
+  .field-input:hover {
+    border-color: var(--ink-muted);
+  }
+  .field-input:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-color: var(--brand);
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: var(--critical);
+  }
+  textarea.field-input {
+    min-height: 144px;
+    resize: vertical;
+  }
+  select.field-input {
+    appearance: none;
+    padding-right: 44px;
+  }
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap::after {
+    content: "";
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--ink-muted);
+    border-bottom: 2px solid var(--ink-muted);
+    transform: translateY(-70%) rotate(45deg);
+    pointer-events: none;
+  }
+  /* Choice chips for radio groups: large, tappable, clearly selected. */
+  .choice {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    cursor: pointer;
+    transition:
+      border-color 160ms ease,
+      background-color 160ms ease;
+  }
+  .choice:hover {
+    border-color: var(--ink-muted);
+  }
+  .choice:has(input:checked) {
+    border-color: var(--brand);
+    background: var(--surface-tint);
+  }
+  .choice:has(input:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* Copy placeholders: highlighted in development; the production build fails if any remain. */
+  .placeholder-copy {
+    background: var(--brand-tint);
+    color: var(--warning);
+    outline: 1.5px dashed var(--warning);
+    outline-offset: 1px;
+    border-radius: 2px;
+    padding-inline: 2px;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 20px;
+    top: -100px;
+    z-index: 100;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+
+  /* ---------- Header ---------- */
+  .site-header {
+    transition:
+      border-color 200ms ease,
+      background-color 200ms ease;
+    border-bottom: 1px solid transparent;
+  }
+  .site-header[data-scrolled="true"] {
+    border-bottom-color: var(--hairline);
+  }
+  /* Before JavaScript runs (or without it), always show the hairline. */
+  html:not([data-js]) .site-header {
+    border-bottom-color: var(--hairline);
+  }
+}
+
+/* ---------- Motion: scroll reveals ----------
+ * Content is visible by default. Only once JavaScript has run (html[data-reveal]) and only
+ * when the visitor has not asked for reduced motion are below-the-fold items faded in.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-reveal] [data-reveal-item]:not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  html[data-reveal] [data-reveal-item] {
+    transition:
+      opacity 700ms cubic-bezier(0.2, 0.7, 0.2, 1),
+      transform 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+}
+
+/*
+ * The mark keeps its own fixed brand colours (mark.svg). On navy it uses the supplied
+ * white reversed version (mark-reversed.svg). These are logo values, not UI colours.
+ */
+.mark-primary {
+  stroke: #295ca4;
+}
+.mark-secondary {
+  stroke: #4a90d9;
+}
+.tone-navy .mark-primary,
+.tone-navy .mark-secondary,
+.tone-photo .mark-primary,
+.tone-photo .mark-secondary {
+  stroke: #ffffff;
 }

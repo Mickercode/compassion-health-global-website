@@ -13,7 +13,7 @@ export const partner = {
       "It requires people, expertise, resources, institutions and partnerships committed to a common purpose.",
       "We invite organisations, healthcare institutions, medical professionals, suppliers, technical partners and mission-minded individuals to explore how we can work together.",
     ],
-    button: { label: "Start a Partnership Conversation", href: "/contact" },
+    button: { label: "Start a Partnership Conversation", href: "#partner-form" },
   },
 
   why: {
@@ -85,5 +85,7 @@ export const partner = {
     heading: "Let’s build something that matters.",
     body: "If your organisation, institution or team believes in bringing healthcare closer to people, we would welcome a conversation.",
     button: { label: "Contact Our Partnership Team", href: "/contact" },
+    /** Partnership enquiries are collected by Jotform (form “Let’s Build Together.”). */
+    jotformId: "263300882928058",
   },
 };

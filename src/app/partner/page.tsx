@@ -1,6 +1,7 @@
 import { Arcs } from "@/components/Arcs";
 import { ButtonLink } from "@/components/ButtonLink";
 import { Eyebrow, Prose } from "@/components/blocks";
+import { JotformEmbed } from "@/components/forms/JotformEmbed";
 import { Photo } from "@/components/Photo";
 import { Reveal } from "@/components/Reveal";
 import { partner } from "@/content/partner";
@@ -94,20 +95,25 @@ export default function PartnerPage() {
         </div>
       </section>
 
-      {/* Final call */}
-      <section aria-labelledby="final-heading" className="section">
-        <div className="container-site">
-          <Reveal className="grid gap-8 border-t border-hairline pt-12 lg:grid-cols-12 lg:items-end">
-            <div className="lg:col-span-8">
-              <h2 id="final-heading" className="t-display text-brand">
+      {/* Final call, with the partnership form. The invitation stays in view while the form scrolls. */}
+      <section id="partner-form" aria-labelledby="final-heading" className="section">
+        <div className="container-site grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-[calc(var(--header-h)+48px)]">
+              <h2 id="final-heading" className="t-statement text-brand">
                 {final.heading}
               </h2>
-              <p className="t-lead measure mt-6 text-ink-muted">{final.body}</p>
+              <p className="t-body mt-6 text-ink-muted">{final.body}</p>
+              <div className="mt-8">
+                <ButtonLink href={final.button.href} variant="secondary">
+                  {final.button.label}
+                </ButtonLink>
+              </div>
             </div>
-            <div className="lg:col-span-4 lg:justify-self-end">
-              <ButtonLink href={final.button.href}>{final.button.label}</ButtonLink>
-            </div>
-          </Reveal>
+          </div>
+          <div className="overflow-hidden rounded-lg border border-hairline bg-surface lg:col-span-8">
+            <JotformEmbed formId={final.jotformId} title={final.heading} />
+          </div>
         </div>
       </section>
     </>
